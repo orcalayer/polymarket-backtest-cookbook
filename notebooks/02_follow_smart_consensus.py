@@ -26,17 +26,18 @@
 # > predict future results.
 
 # %% [markdown]
-# > **Running in Google Colab?** Uncomment and run the next cell first — it
-# > installs dependencies, pulls the repo for the shared `utils/` helper, and
-# > prompts for your key. Skip it if you cloned the repo and run locally.
-
-# %%
-# --- Colab setup: in Colab, remove the leading "# " from each line and run ---
-# !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
-# !git clone -q https://github.com/orcalayer/polymarket-backtest-cookbook.git
-# %cd polymarket-backtest-cookbook/notebooks
-# import os, getpass
-# os.environ["ORCALAYER_API_KEY"] = getpass.getpass("OrcaLayer Premium API key: ")
+# > **Running in Google Colab?** Paste the snippet below into a new cell and run
+# > it first (installs dependencies, pulls the repo for the shared `utils/`
+# > helper, and prompts for your key), then continue from the next cell. Skip
+# > this if you cloned the repo and run locally.
+# >
+# > ```python
+# > !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
+# > !git clone https://github.com/orcalayer/polymarket-backtest-cookbook.git
+# > %cd polymarket-backtest-cookbook/notebooks
+# > import os, getpass
+# > os.environ["ORCALAYER_API_KEY"] = getpass.getpass("OrcaLayer Premium API key: ")
+# > ```
 
 # %%
 import os

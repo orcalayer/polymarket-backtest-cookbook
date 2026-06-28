@@ -1,0 +1,8 @@
+orcalayer>=0.1.3
+pandas
+numpy
+matplotlib
+jupyter
+jupytext
+python-dotenv
+httpx

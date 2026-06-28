@@ -20,6 +20,19 @@
 # > ⚠️ **Informational only — NOT financial advice.** Past performance does not
 # > predict future results. These are historical, already-resolved markets.
 
+# %% [markdown]
+# > **Running in Google Colab?** Uncomment and run the next cell first — it
+# > installs dependencies, pulls the repo for the shared `utils/` helper, and
+# > prompts for your key. Skip it if you cloned the repo and run locally.
+
+# %%
+# --- Colab setup: in Colab, remove the leading "# " from each line and run ---
+# !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
+# !git clone -q https://github.com/orcalayer/polymarket-backtest-cookbook.git
+# %cd polymarket-backtest-cookbook/notebooks
+# import os, getpass
+# os.environ["ORCALAYER_API_KEY"] = getpass.getpass("OrcaLayer Premium API key: ")
+
 # %%
 import os
 import sys

@@ -1,69 +1,76 @@
 # Polymarket Backtest Cookbook
 
-Ready-to-run notebooks for backtesting **copy-trade strategies** on Polymarket
-**smart-money** data, via the [OrcaLayer API](https://orcalayer.com/developers).
+Ready-to-run notebooks to backtest copy-trade ideas on Polymarket smart-money
+data via the [OrcaLayer API](https://orcalayer.com/developers).
 
-OrcaLayer reads every Polymarket trade from the chain (1.2B+ on-chain fills),
-filters out farmers and hedgers, and corrects realized P&L (NegRisk halving,
-per-wallet FIFO). These notebooks turn that into equity curves that answer one
-question: *"what would copying this wallet — or this cohort — actually have
-returned?"*
+## Who it's for
 
-> ⚠️ **Informational only — NOT financial advice.** Past performance does not
-> predict future results. This is a data-analysis demo built on historical,
-> already-resolved markets; it is not a trading product or a recommendation.
+Developers building Polymarket bots, or anyone testing a "copy this wallet" idea
+on historical, already-resolved markets **before risking real money**.
 
-## What's inside
-
-| Notebook | What it does |
-|---|---|
-| [`01_follow_one_whale`](notebooks/01_follow_one_whale.ipynb) | Equity curve of copying every resolved bet of a single smart whale. |
-| [`02_follow_smart_consensus`](notebooks/02_follow_smart_consensus.ipynb) | Blend a category's smart cohort into one cohort equity curve vs a flat baseline. |
-| [`03_farmer_trap`](notebooks/03_farmer_trap.ipynb) | Raw "top traders" vs farmer-filtered top, side by side — the filter's value in real P&L. |
-
-Each notebook is committed as both a reviewable `.py` (jupytext *percent*
-format) and a runnable `.ipynb`.
+> **Informational and educational only. This is not financial advice. Backtests
+> use historical resolved markets; past performance does not predict future
+> results.**
 
 ## Quickstart
+
+Tested on **Python 3.12**.
 
 ```bash
 git clone https://github.com/orcalayer/polymarket-backtest-cookbook.git
 cd polymarket-backtest-cookbook
+
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+
 pip install -r requirements.txt
-cp .env.example .env          # then put your Premium key in ORCALAYER_API_KEY
-jupyter lab                   # open the notebooks/ folder
+
+cp .env.example .env             # then add your Premium key to ORCALAYER_API_KEY
+
+jupyter lab                      # open the notebooks/ folder
 ```
 
-- The **leaderboard** (wallet discovery) is **keyless**.
-- The per-wallet **`/backtest`** endpoint is **Premium** — get a key at
-  [orcalayer.com/pricing](https://orcalayer.com/pricing) and set it as
-  `ORCALAYER_API_KEY` in your `.env`.
+> **The key, and the 403 trap.** The public **leaderboard works WITHOUT a key**.
+> The per-wallet **`/backtest` REQUIRES a Premium key**. Sending a key *to the
+> leaderboard* returns **403** — so the notebooks only attach the key to
+> `/backtest`. Get a key at [orcalayer.com/pricing](https://orcalayer.com/pricing).
 
-### Open in Colab
+## The notebooks
 
-Each notebook can be opened directly in Google Colab (add your key via
-`os.environ["ORCALAYER_API_KEY"]` in the first cell):
+**`01_follow_one_whale`** — what would copying every resolved bet of a single
+smart-money wallet have returned? Pulls the wallet's resolved positions, builds a
+cumulative-P&L equity curve, and reports final P&L, win rate, max drawdown and
+resolved-market count.
 
-`https://colab.research.google.com/github/orcalayer/polymarket-backtest-cookbook/blob/main/notebooks/01_follow_one_whale.ipynb`
+**`02_follow_smart_consensus`** — instead of one wallet, copy a whole smart-money
+cohort for a category. Pulls the top smart wallets (keyless leaderboard),
+backtests each, and blends them into one equal-weight cohort equity curve versus
+a flat baseline.
 
-## Data sources
+**`03_farmer_trap`** — copying the raw top-P&L traders (farmers included) versus
+the farmer-filtered top, side by side on one chart. The **gap between the two
+curves is the point**: a naive "top traders" leaderboard rewards farmers who buy
+near-decided markets at ~99¢ to manufacture flawless win rates; OrcaLayer's
+`filter=smart` excludes them. Run it to see the current numbers.
 
-| Call | Auth | Via |
-|---|---|---|
-| `leaderboard(sort, category, filter, limit)` | keyless | `orcalayer` SDK |
-| `GET /api/v2/whale/{address}/backtest?limit=` | **Premium** | thin `httpx` wrapper (no SDK method yet) |
+## Results vary
 
-`/backtest` returns resolved positions per outcome — `market_id`, `side`,
-`avg_entry_price`, `pnl`, `won`, `category`, `resolved_at` — plus a `summary`
-(`total`, `resolved`, `wins`, `losses`, `win_rate`, `total_pnl`). The `pnl`
-already encodes OrcaLayer's NegRisk/FIFO/farmer methodology, so the notebooks
-never reconcile it against any other source — that *is* the point.
+Every number comes from **live data** and will differ each run as new markets
+resolve. The notebooks intentionally hardcode no results — run them to see
+current figures.
+
+## Rate limits
+
+The API allows **300 requests/min**. The cohort notebooks (02, 03) loop over many
+wallets calling `/backtest`, so they are throttled with a short sleep between
+calls to stay under the limit on a fresh run.
 
 ## Links
 
-- **Developers:** https://orcalayer.com/developers
-- **Get a key / pricing:** https://orcalayer.com/pricing
-- **Methodology** (smart money, the farmer filter): https://orcalayer.com/methodology
+- Developers: https://orcalayer.com/developers
+- API docs: https://orcalayer.com/docs
+- Methodology (smart money, the farmer filter): https://orcalayer.com/methodology
+- Pricing / get a key: https://orcalayer.com/pricing
 
 ## License
 

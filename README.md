@@ -30,10 +30,11 @@ cp .env.example .env             # then add your Premium key to ORCALAYER_API_KE
 jupyter lab                      # open the notebooks/ folder
 ```
 
-> **The key, and the 403 trap.** The public **leaderboard works WITHOUT a key**.
-> The per-wallet **`/backtest` REQUIRES a Premium key**. Sending a key *to the
-> leaderboard* returns **403** — so the notebooks only attach the key to
-> `/backtest`. Get a key at [orcalayer.com/pricing](https://orcalayer.com/pricing).
+> **The key.** The public **leaderboard works WITHOUT a key**. The per-wallet
+> **`/backtest` REQUIRES a Premium key**. A key on the *leaderboard* routes
+> through the Premium surface — the SDK (v0.2+) falls back to public so it still
+> works, but the notebooks only attach the key to `/backtest` to avoid a wasted
+> round-trip. Get a key at [orcalayer.com/pricing](https://orcalayer.com/pricing).
 
 ## The notebooks
 
@@ -61,7 +62,7 @@ current figures.
 
 ## Rate limits
 
-The API allows **300 requests/min**. The cohort notebooks (02, 03) loop over many
+The API allows **600 requests/min** (Premium). The cohort notebooks (02, 03) loop over many
 wallets calling `/backtest`, so they are throttled with a short sleep between
 calls to stay under the limit on a fresh run.
 

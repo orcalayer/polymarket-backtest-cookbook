@@ -24,7 +24,7 @@
 #
 # **API tiers:** the leaderboard calls below are **keyless**; only the per-wallet
 # `/backtest` (run inside `blend_cohort`) needs your Premium `ORCALAYER_API_KEY`.
-# Do **not** pass a key to the leaderboard — that triggers a 403.
+# Do **not** pass a key to the leaderboard — it wastes a round-trip (the SDK v0.2+ falls back to public).
 #
 # > ⚠️ **Informational only — NOT financial advice.** Past performance does not
 # > predict future results.
@@ -36,7 +36,7 @@
 # > this if you cloned the repo and run locally.
 # >
 # > ```python
-# > !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
+# > !pip install -q orcalayer==0.2.0 pandas matplotlib httpx python-dotenv
 # > !git clone https://github.com/orcalayer/polymarket-backtest-cookbook.git
 # > %cd polymarket-backtest-cookbook/notebooks
 # > import os, getpass

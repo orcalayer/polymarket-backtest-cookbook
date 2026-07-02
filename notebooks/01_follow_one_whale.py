@@ -27,7 +27,7 @@
 # > this if you cloned the repo and run locally.
 # >
 # > ```python
-# > !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
+# > !pip install -q orcalayer==0.2.0 pandas matplotlib httpx python-dotenv
 # > !git clone https://github.com/orcalayer/polymarket-backtest-cookbook.git
 # > %cd polymarket-backtest-cookbook/notebooks
 # > import os, getpass

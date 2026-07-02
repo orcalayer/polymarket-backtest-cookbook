@@ -35,7 +35,8 @@ def get_client(api_key: str | None = None):
     """Official OrcaLayer SDK client.
 
     Defaults to anonymous: the leaderboard is keyless, and passing a key there
-    triggers Premium-subscription validation we don't need for discovery.
+    routes through the Premium surface (the SDK v0.2+ falls back to public, but
+    it wastes a round-trip), so discovery calls skip the key.
     """
     from orcalayer import OrcaLayer
 
@@ -73,10 +74,28 @@ def backtest(address: str, limit: int = 500, api_key: str | None = None) -> dict
             "Get a key at https://orcalayer.com/pricing"
         )
     url = f"{API_BASE}/api/v2/whale/{address.lower()}/backtest"
-    resp = httpx.get(url, params={"limit": limit},
-                     headers={"X-API-Key": key}, timeout=30.0)
-    resp.raise_for_status()
-    return resp.json()
+    # Small resilience loop so one hiccup during a cohort blend does not throw
+    # away every wallet already fetched: honour Retry-After on 429 (cap 60s, up
+    # to 2 retries) and retry a transient 502/503 once.
+    retried_5xx = False
+    last_resp = None
+    for attempt in range(3):
+        last_resp = httpx.get(url, params={"limit": limit},
+                              headers={"X-API-Key": key}, timeout=30.0)
+        if last_resp.status_code == 429 and attempt < 2:
+            try:
+                wait = float(last_resp.headers.get("Retry-After", "5"))
+            except ValueError:
+                wait = 5.0
+            time.sleep(min(wait, 60))
+            continue
+        if last_resp.status_code in (502, 503) and not retried_5xx:
+            retried_5xx = True
+            time.sleep(1)
+            continue
+        break
+    last_resp.raise_for_status()
+    return last_resp.json()
 
 
 def positions_df(bt) -> pd.DataFrame:
@@ -88,8 +107,11 @@ def positions_df(bt) -> pd.DataFrame:
     """
     rows = bt.get("positions", []) if isinstance(bt, dict) else bt
     df = pd.DataFrame(rows)
-    if df.empty:
-        return df
+    # Guard: empty, or positions present but missing the resolved-outcome /
+    # time columns (an all-pending wallet, or a future field rename). Return an
+    # empty frame with a stable schema rather than raising KeyError.
+    if df.empty or "won" not in df.columns or "last_trade_ts" not in df.columns:
+        return df.iloc[0:0]
     df = df[df["won"].notna()].copy()
     df["won"] = df["won"].astype(bool)
     df = df.sort_values("last_trade_ts").reset_index(drop=True)
@@ -129,7 +151,7 @@ def blend_cohort(wallets, limit: int = 500, api_key: str | None = None,
 
     Models an equal-weight "copy the whole cohort" portfolio: P&L is summed by
     resolution time across every wallet. ``wallets`` may be addresses or
-    leaderboard dicts. ``sleep`` paces the loop under the 300/min rate limit.
+    leaderboard dicts. ``sleep`` paces the loop under the 600/min rate limit.
     Returns ``(cohort_curve_df, per_wallet_summaries)``.
     """
     frames, summaries = [], []

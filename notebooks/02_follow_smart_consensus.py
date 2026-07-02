@@ -20,7 +20,7 @@
 #
 # **API tiers:** the leaderboard is **keyless**; only the per-wallet `/backtest`
 # (run inside `blend_cohort`) needs your Premium `ORCALAYER_API_KEY`. Do **not**
-# pass a key to the leaderboard — that triggers a 403.
+# pass a key to the leaderboard — it wastes a round-trip (the SDK v0.2+ falls back to public).
 #
 # > ⚠️ **Informational only — NOT financial advice.** Past performance does not
 # > predict future results.
@@ -32,7 +32,7 @@
 # > this if you cloned the repo and run locally.
 # >
 # > ```python
-# > !pip install -q orcalayer==0.1.3 pandas matplotlib httpx python-dotenv
+# > !pip install -q orcalayer==0.2.0 pandas matplotlib httpx python-dotenv
 # > !git clone https://github.com/orcalayer/polymarket-backtest-cookbook.git
 # > %cd polymarket-backtest-cookbook/notebooks
 # > import os, getpass
@@ -67,7 +67,7 @@ for w in cohort:
 # %% [markdown]
 # Backtest every wallet and blend them. `blend_cohort` sums P&L by resolution
 # time across the cohort (an equal-weight "copy them all" portfolio) and paces
-# the loop under the 300-requests/min rate limit.
+# the loop under the 600-requests/min rate limit.
 
 # %%
 curve, summaries = blend_cohort(cohort, limit=500)

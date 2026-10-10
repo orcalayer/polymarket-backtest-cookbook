@@ -21,6 +21,13 @@
 # > predict future results. These are historical, already-resolved markets.
 
 # %% [markdown]
+# > **Look-ahead warning.** The wallet here is a known smart whale, picked today. Choosing a wallet that way uses its whole history, including the markets this
+# > backtest replays, so the curve shows what already happened, not a copy strategy you could have run at the time.
+# > For a walk-forward test (pick wallets on one period, measure them on the next, at a price you could really get)
+# > see [polymarket-copy-trading-whales-backtest](https://github.com/orcalayer/polymarket-copy-trading-whales-backtest):
+# > in five sports, the best whales of the previous two months went roughly flat the month after.
+
+# %% [markdown]
 # > **Running in Google Colab?** Paste the snippet below into a new cell and run
 # > it first (installs dependencies, pulls the repo for the shared `utils/`
 # > helper, and prompts for your key), then continue from the next cell. Skip

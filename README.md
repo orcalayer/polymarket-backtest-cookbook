@@ -12,6 +12,12 @@ on historical, already-resolved markets **before risking real money**.
 > use historical resolved markets; past performance does not predict future
 > results.**
 
+> **Look-ahead warning.** The notebooks pick wallets from today's leaderboard or a known smart whale. Choosing a wallet that way uses its whole history, including the markets this
+> backtest replays, so the curve shows what already happened, not a copy strategy you could have run at the time.
+> For a walk-forward test (pick wallets on one period, measure them on the next, at a price you could really get)
+> see [polymarket-copy-trading-whales-backtest](https://github.com/orcalayer/polymarket-copy-trading-whales-backtest):
+> in five sports, the best whales of the previous two months went roughly flat the month after.
+
 ## Quickstart
 
 Tested on **Python 3.12**.
